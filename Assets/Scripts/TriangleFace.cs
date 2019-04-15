@@ -48,12 +48,12 @@ public class TriangleFace {
                 }
             }
             
-            if(similar + targetVertices - 2 < i) {
+            if( similar - targetVertices + 2 < i ) {
                 //Debug.Log("We're in cycle " + i + " with only " + similar + " similar and whishing to reach " + targetVertices);
                 return false;
             }
         }
-        return similar == targetVertices;
+        return true;
     }
     
     public static bool areVerticesEqual(Vector3 v1, Vector3 v2) {
