@@ -5,17 +5,20 @@ using UnityEngine;
 
 public class FaceMapperEngine : MonoBehaviour
 {
-    public MeshFilter objectToMap;
+    public MeshFilter[] objectsToMap;
 
     [ContextMenu("Map")]
     void FaceMap()
     {
-        Mesh mesh = objectToMap.sharedMesh;
+        foreach (var meshFilter in objectsToMap)
+        {
+            Mesh mesh = meshFilter.sharedMesh;
 
-        Stopwatch sw = Stopwatch.StartNew();
-        FaceMapper.mapTriangles(mesh.triangles, mesh.vertices);
-        sw.Stop();
+            Stopwatch sw = Stopwatch.StartNew();
+            FaceMapper.mapTriangles(mesh.triangles, mesh.vertices);
+            sw.Stop();
 
-        UnityEngine.Debug.Log("Time taken: " +  sw.Elapsed.TotalMilliseconds + "ms");
+            UnityEngine.Debug.Log("Time taken for " + meshFilter.gameObject.name + " -> " + sw.Elapsed.TotalMilliseconds + "ms");
+        }
     }
 }

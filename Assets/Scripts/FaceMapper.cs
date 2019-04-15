@@ -7,16 +7,27 @@ public static class FaceMapper
 {
     public static List<TriangleFace> mapTriangles(int[] triangles, Vector3[] vertices)
     {
-        var (mappedTriangles, mappedVertices) = createTriangles(triangles, vertices);
-
         var count = 0;
-        for (var i = 0; i < mappedTriangles.Count - 1; i++)
+        var (mappedTriangles, mappedVertices) = createTriangles(triangles, vertices);
+        
+        foreach (var vertex in mappedVertices.Keys)
         {
-            for (var j = i + 1; j < mappedTriangles.Count; j++)
+            for (var i = 0; i < mappedVertices[vertex].Count - 1; i++)
             {
-                mappedTriangles[i].addAdjacent(mappedTriangles[j]); count++;
+                for (var j = i + 1; j < mappedVertices[vertex].Count; j++)
+                {
+                    mappedVertices[vertex][i].addAdjacent(mappedVertices[vertex][j]); count++;
+                }
             }
         }
+
+        // for (var i = 0; i < mappedTriangles.Count - 1; i++)
+        // {
+        //     for (var j = i + 1; j < mappedTriangles.Count; j++)
+        //     {
+        //         mappedTriangles[i].addAdjacent(mappedTriangles[j]); count++;
+        //     }
+        // }
         
         Debug.Log("Faces: " + mappedTriangles.Count + ", Cycles: " + count);
 

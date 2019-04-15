@@ -35,7 +35,7 @@ namespace Tests
         }
 
         [Test]
-        public void MapsInUnder100Milis()
+        public void MapsInUnder20Milis()
         {
             int numberIterations = 3;
             
@@ -45,11 +45,7 @@ namespace Tests
                 FaceMapper.mapTriangles(mesh.triangles, mesh.vertices);
             }
             sw.Stop();
-
-            Assert.Less(sw.Elapsed.TotalMilliseconds / numberIterations, 1000);
-            Assert.Less(sw.Elapsed.TotalMilliseconds / numberIterations, 500);
-            Assert.Less(sw.Elapsed.TotalMilliseconds / numberIterations, 250);
-            Assert.Less(sw.Elapsed.TotalMilliseconds / numberIterations, 100);
+            Assert.Less(sw.Elapsed.TotalMilliseconds / numberIterations, 20);
         }
     }
 }
