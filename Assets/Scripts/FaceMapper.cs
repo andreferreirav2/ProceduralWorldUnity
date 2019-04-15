@@ -7,12 +7,12 @@ public static class FaceMapper
 {
     public static List<TriangleFace> mapTriangles(int[] triangles, Vector3[] vertices)
     {
-        List<TriangleFace> mappedTriangles = createTriangles(triangles, vertices);
+        var (mappedTriangles, mappedVertices) = createTriangles(triangles, vertices);
 
-        int count = 0;
-        for (int i = 0; i < mappedTriangles.Count - 1; i++)
+        var count = 0;
+        for (var i = 0; i < mappedTriangles.Count - 1; i++)
         {
-            for (int j = i + 1; j < mappedTriangles.Count; j++)
+            for (var j = i + 1; j < mappedTriangles.Count; j++)
             {
                 mappedTriangles[i].addAdjacent(mappedTriangles[j]); count++;
             }
@@ -22,32 +22,35 @@ public static class FaceMapper
 
         return mappedTriangles;
     }
-    
-    public static List<TriangleFace> mapTrianglesOrig(int[] triangles, Vector3[] vertices)
-    {
-        List<TriangleFace> mappedTriangles = createTriangles(triangles, vertices);
 
-        for (int i = 0; i < mappedTriangles.Count - 1; i++)
+    public static (List<TriangleFace>, Dictionary<Vector3, List<TriangleFace>>) createTriangles(int[] triangles, Vector3[] vertices)
+    {
+        var mappedTriangles = new List<TriangleFace>();
+        var vertexToTriangles = new Dictionary<Vector3, List<TriangleFace>>();
+        
+        for (int i = 0; i < triangles.Length; i += 3)
         {
-            for (int j = i + 1; j < mappedTriangles.Count; j++)
+            var v1 = vertices[triangles[i]];
+            var v2 = vertices[triangles[i + 1]];
+            var v3 = vertices[triangles[i + 2]];
+            var triangle = new TriangleFace(v1, v2, v3);
+            
+            mappedTriangles.Add(triangle);
+            foreach (Vector3 v in new ArrayList(){v1, v2, v3})
             {
-                mappedTriangles[i].addAdjacent(mappedTriangles[j]);
+                List<TriangleFace> trianglesOfVertex;
+                if (!vertexToTriangles.ContainsKey(v))
+                {
+                    trianglesOfVertex = new List<TriangleFace>();
+                    vertexToTriangles.Add(v, trianglesOfVertex);
+                } else {
+                    trianglesOfVertex = vertexToTriangles[v];
+                }
+                trianglesOfVertex.Add(triangle);
             }
         }
 
-        return mappedTriangles;
-    }
-
-    public static List<TriangleFace> createTriangles(int[] triangles, Vector3[] vertices)
-    {
-        List<TriangleFace> mappedTriangles = new List<TriangleFace>();
-
-        for (int i = 0; i < triangles.Length; i += 3)
-        {
-            mappedTriangles.Add(new TriangleFace(vertices[triangles[i]], vertices[triangles[i + 1]], vertices[triangles[i + 2]]));
-        }
-
-        return mappedTriangles;
+        return (mappedTriangles, vertexToTriangles);
     }
 
     public static List<TriangleFace> extractFaces(List<TriangleFace> faces, int numToExtract)

@@ -33,7 +33,7 @@ namespace Tests
         [Test]
         public void MapperRetursFourTriangles()
         {
-            List<TriangleFace> mappedTriangles = FaceMapper.createTriangles(triangles, vertices);
+            var (mappedTriangles, mappedVertices) = FaceMapper.createTriangles(triangles, vertices);
 
             Assert.IsNotEmpty(mappedTriangles);
             Assert.AreEqual(mappedTriangles.Count, 4);
@@ -42,7 +42,7 @@ namespace Tests
         [Test]
         public void MapperRetursFourTrianglesThatAreCorrect()
         {
-            List<TriangleFace> mappedTriangles = FaceMapper.createTriangles(triangles, vertices);
+            var (mappedTriangles, mappedVertices) = FaceMapper.createTriangles(triangles, vertices);
 
             Assert.Contains(downleft, mappedTriangles[0].vertices);
             Assert.Contains(downright, mappedTriangles[0].vertices);
@@ -54,9 +54,42 @@ namespace Tests
         }
 
         [Test]
+        public void MapperReturnsSixVertices()
+        {
+            var (mappedTriangles, mappedVertices) = FaceMapper.createTriangles(triangles, vertices);
+
+            foreach (var v in vertices)
+            {
+                Assert.Contains(v, mappedVertices.Keys);
+            }
+        }
+
+        [Test]
+        public void MapperReturnsSixVerticesThatHaveTriangles()
+        {
+            var (mappedTriangles, mappedVertices) = FaceMapper.createTriangles(triangles, vertices);
+
+            Assert.Contains(mappedTriangles[0], mappedVertices[downleft]);
+            Assert.Contains(mappedTriangles[0], mappedVertices[downright]);
+            Assert.Contains(mappedTriangles[0], mappedVertices[midleft]);
+
+            Assert.Contains(mappedTriangles[1], mappedVertices[downright]);
+            Assert.Contains(mappedTriangles[1], mappedVertices[midleft]);
+            Assert.Contains(mappedTriangles[1], mappedVertices[midright]);
+
+            Assert.Contains(mappedTriangles[2], mappedVertices[midleft]);
+            Assert.Contains(mappedTriangles[2], mappedVertices[midright]);
+            Assert.Contains(mappedTriangles[2], mappedVertices[upleft]);
+
+            Assert.Contains(mappedTriangles[3], mappedVertices[midright]);
+            Assert.Contains(mappedTriangles[3], mappedVertices[upleft]);
+            Assert.Contains(mappedTriangles[3], mappedVertices[upright]);
+        }
+
+        [Test]
         public void MapperRetursFourTrianglesThatAreAdjacent()
         {
-            List<TriangleFace> mappedTriangles = FaceMapper.mapTriangles(triangles, vertices);
+            var mappedTriangles = FaceMapper.mapTriangles(triangles, vertices);
 
             Assert.True(mappedTriangles[0].isAdjacent(mappedTriangles[1]));
             Assert.True(mappedTriangles[1].isAdjacent(mappedTriangles[2]));
@@ -66,7 +99,7 @@ namespace Tests
         [Test]
         public void TriangleHasAdjacent()
         {
-            List<TriangleFace> mappedTriangles = FaceMapper.mapTriangles(triangles, vertices);
+            var mappedTriangles = FaceMapper.mapTriangles(triangles, vertices);
 
             Assert.IsNotEmpty(mappedTriangles[0].adjacent);
             Assert.AreEqual(mappedTriangles[0].adjacent.Count, 1);
@@ -84,7 +117,7 @@ namespace Tests
         [Test]
         public void TrianglesAreAdjacent()
         {
-            List<TriangleFace> mappedTriangles = FaceMapper.mapTriangles(triangles, vertices);
+            var mappedTriangles = FaceMapper.mapTriangles(triangles, vertices);
 
             Assert.True(mappedTriangles[0].adjacent.Contains(mappedTriangles[1]));
 

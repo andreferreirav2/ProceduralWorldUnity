@@ -49,7 +49,6 @@ public class TriangleFace {
             }
             
             if( similar - targetVertices + 2 < i ) {
-                //Debug.Log("We're in cycle " + i + " with only " + similar + " similar and whishing to reach " + targetVertices);
                 return false;
             }
         }
