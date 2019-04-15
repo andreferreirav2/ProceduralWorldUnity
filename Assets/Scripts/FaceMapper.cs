@@ -21,16 +21,6 @@ public static class FaceMapper
             }
         }
 
-        // for (var i = 0; i < mappedTriangles.Count - 1; i++)
-        // {
-        //     for (var j = i + 1; j < mappedTriangles.Count; j++)
-        //     {
-        //         mappedTriangles[i].addAdjacent(mappedTriangles[j]); count++;
-        //     }
-        // }
-        
-        Debug.Log("Faces: " + mappedTriangles.Count + ", Cycles: " + count);
-
         return mappedTriangles;
     }
 

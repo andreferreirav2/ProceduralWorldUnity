@@ -417,7 +417,6 @@ MonoBehaviour:
   - {fileID: 626160454}
   - {fileID: 908359054}
   - {fileID: 1495943326}
-  - {fileID: 1762583338}
 --- !u!1001 &908359053
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -712,12 +711,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6ec23149cad8b4b97ad09159c4368de7, type: 3}
---- !u!33 &1762583338 stripped
-MeshFilter:
-  m_CorrespondingSourceObject: {fileID: 3300000, guid: 6ec23149cad8b4b97ad09159c4368de7,
-    type: 3}
-  m_PrefabInstance: {fileID: 1762583337}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1992572674
 PrefabInstance:
   m_ObjectHideFlags: 0
