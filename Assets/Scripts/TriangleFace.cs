@@ -27,28 +27,33 @@ public class TriangleFace {
             return false;
         }
         
-        return this == obj || this.numberOfEqualVertices(((TriangleFace) obj).vertices) == 3;
+        return this == obj || this.hasEqualVertices(((TriangleFace) obj).vertices, 3);
     }
 
     public bool isAdjacent(TriangleFace adj)
     {
-        return adj != null && !adj.Equals(null) && !this.Equals(adj) &&
-              this.numberOfEqualVertices(adj.vertices) == 2;
+        return adj != null && this.hasEqualVertices(adj.vertices, 2);
     }
     
-    public int numberOfEqualVertices(List<Vector3> otherVertices) {
+    public bool hasEqualVertices(List<Vector3> otherVertices, int targetVertices) {
         int similar = 0;
-        foreach (Vector3 v in vertices)
+        for (int i = 0; i < vertices.Count && similar != targetVertices; i++)
         {
-            foreach (Vector3 otherV in otherVertices)
+            for (int j = 0; j < otherVertices.Count; j++)
             {
-                if(areVerticesEqual(v, otherV)) {
+                if (areVerticesEqual(vertices[i], otherVertices[j]))
+                {
                     similar++;
                     break;
                 }
             }
+            
+            if(similar + targetVertices - 2 < i) {
+                //Debug.Log("We're in cycle " + i + " with only " + similar + " similar and whishing to reach " + targetVertices);
+                return false;
+            }
         }
-        return similar;
+        return similar == targetVertices;
     }
     
     public static bool areVerticesEqual(Vector3 v1, Vector3 v2) {

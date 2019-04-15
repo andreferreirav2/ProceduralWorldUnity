@@ -46,19 +46,19 @@ namespace Tests
         [Test]
         public void SameTriangleHas3SimilarVertices()
         {
-            Assert.AreEqual(3, t1.numberOfEqualVertices(t1.vertices));
+            Assert.True(t1.hasEqualVertices(t1.vertices, 3));
         }
 
         [Test]
         public void OtherTriangleHas3SimilarVertices()
         {
-            Assert.AreEqual(2, t1.numberOfEqualVertices(t2.vertices));
+            Assert.True(t1.hasEqualVertices(t2.vertices, 2));
         }
 
         [Test]
         public void DiffTriangleHasOneSimilarVertices()
         {
-            Assert.AreEqual(1, t1.numberOfEqualVertices(t3.vertices));
+            Assert.True(t1.hasEqualVertices(t3.vertices, 1));
         }
 
         [Test]

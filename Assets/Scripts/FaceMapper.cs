@@ -9,6 +9,24 @@ public static class FaceMapper
     {
         List<TriangleFace> mappedTriangles = createTriangles(triangles, vertices);
 
+        int count = 0;
+        for (int i = 0; i < mappedTriangles.Count - 1; i++)
+        {
+            for (int j = i + 1; j < mappedTriangles.Count; j++)
+            {
+                mappedTriangles[i].addAdjacent(mappedTriangles[j]); count++;
+            }
+        }
+        
+        Debug.Log("Faces: " + mappedTriangles.Count + ", Cycles: " + count);
+
+        return mappedTriangles;
+    }
+    
+    public static List<TriangleFace> mapTrianglesOrig(int[] triangles, Vector3[] vertices)
+    {
+        List<TriangleFace> mappedTriangles = createTriangles(triangles, vertices);
+
         for (int i = 0; i < mappedTriangles.Count - 1; i++)
         {
             for (int j = i + 1; j < mappedTriangles.Count; j++)

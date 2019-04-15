@@ -37,7 +37,7 @@ namespace Tests
         [Test]
         public void MapsInUnder100Milis()
         {
-            int numberIterations = 1;
+            int numberIterations = 3;
             
             Stopwatch sw = Stopwatch.StartNew();
             for (int i = 0; i < numberIterations; i++)
