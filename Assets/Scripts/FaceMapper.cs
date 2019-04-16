@@ -65,8 +65,7 @@ public static class FaceMapper
         HashSet<TriangleFace> extractedFaces = new HashSet<TriangleFace>();
 
         TriangleFace face = faces[UnityEngine.Random.Range(0, faces.Count)];
-        extractedFaces.Add(face);
-        adjPoll.AddRange(face.adjacent);
+        extractOneFace(faces, extractedFaces, adjPoll, face);
         
         for (int i = 1; i < numToExtract; i++)
         {
@@ -76,9 +75,7 @@ public static class FaceMapper
                 if (!extractedFaces.Contains(adj))
                 {
                     foundOne = true;
-                    extractedFaces.Add(adj);
-                    adjPoll.Remove(adj);
-                    adjPoll.AddRange(adj.adjacent);
+                    extractOneFace(faces, extractedFaces, adjPoll, adj);
                     Shuffle(adjPoll);
                     break;
                 }
@@ -113,12 +110,12 @@ public static class FaceMapper
         
         return (triangles.ToArray(), vertices.ToArray());
     }
-    
-    private static void AddRange<T>(HashSet<T> set, IEnumerable objs) {
-        foreach (T obj in objs)
-        {
-            set.Add(obj);
-        }
+
+    static void extractOneFace(List<TriangleFace> allFaces, HashSet<TriangleFace> extractedFaces, List<TriangleFace> adjPoll, TriangleFace face) {
+        extractedFaces.Add(face);
+        allFaces.Remove(face);
+        adjPoll.Remove(face);
+        adjPoll.AddRange(face.adjacent);
     }
 
     private static void Shuffle<T>(IList<T> ts)

@@ -49,29 +49,20 @@ namespace Tests
         }
 
         [Test]
-        public void MapperExtracts1ConnectedFaces()
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(6)]
+        [TestCase(12)]
+        public void MapperExtractsFaces(int numFaces)
         {
-            Assert.AreEqual(1, FaceMapper.extractFaces(mappedTriangles, 1).Count);
-        }
-
-        [Test]
-        public void MapperExtracts2ConnectedFaces()
-        {
-            Assert.AreEqual(2, FaceMapper.extractFaces(mappedTriangles, 2).Count);
-        }
-
-        [Test]
-        public void MapperExtracts6ConnectedFaces()
-        {
-            List<TriangleFace> sixConnectedFaces = FaceMapper.extractFaces(mappedTriangles, 6);
-            Assert.AreEqual(6, sixConnectedFaces.Count);
-        }
-
-        [Test]
-        public void MapperExtracts12ConnectedFaces()
-        {
-            List<TriangleFace> twelveConnectedFaces = FaceMapper.extractFaces(mappedTriangles, 12);
-            Assert.AreEqual(12, twelveConnectedFaces.Count);
+            var connectedFaces = FaceMapper.extractFaces(mappedTriangles, numFaces);
+            Assert.AreEqual(numFaces, connectedFaces.Count);
+            Assert.AreEqual(12 - numFaces, mappedTriangles.Count);
+            
+            foreach (var extractedFace in connectedFaces)
+            {
+                Assert.False(mappedTriangles.Contains(extractedFace));
+            }
         }
     }
 }

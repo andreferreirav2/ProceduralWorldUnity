@@ -28,13 +28,20 @@ public class FaceMapperEngine : MonoBehaviour
             {
                 var extractedFaces = FaceMapper.extractFaces(triangles, sizeOfEachContinent);
 
-                GameObject sub = buildMeshFromTriangles(extractedFaces);
+                GameObject sub = buildMeshFromTriangles(extractedFaces, extracedMaterial);
 
                 sub.name = meshFilter.gameObject.name + "_" + i;
-                sub.transform.position = meshFilter.gameObject.transform.position;
+                sub.transform.position = meshFilter.gameObject.transform.position + Vector3.up * 2;
                 sub.transform.localScale = Vector3.one * 1.0001f;
                 sub.transform.parent = meshFilter.gameObject.transform;
             }
+
+            GameObject subSea = buildMeshFromTriangles(triangles, meshFilter.gameObject.GetComponent<MeshRenderer>().material);
+
+            subSea.name = meshFilter.gameObject.name + "_sea";
+            subSea.transform.position = meshFilter.gameObject.transform.position + Vector3.up * 2;
+            subSea.transform.localScale = Vector3.one * 1.0001f;
+            subSea.transform.parent = meshFilter.gameObject.transform;
             
             sw.Stop();
             UnityEngine.Debug.Log("Time taken for " + meshFilter.gameObject.name + " -> " + sw.Elapsed.TotalMilliseconds + "ms");
@@ -48,11 +55,11 @@ public class FaceMapperEngine : MonoBehaviour
         }
     }
     
-    private GameObject buildMeshFromTriangles(List<TriangleFace> meshFaces) {
+    private GameObject buildMeshFromTriangles(List<TriangleFace> meshFaces, Material material) {
         var (rawTriangles, rawVertices) = FaceMapper.getRawFromTriangles(meshFaces);
 
         GameObject sub = new GameObject();
-        sub.AddComponent<MeshRenderer>().material = extracedMaterial;
+        sub.AddComponent<MeshRenderer>().material = material;
 
         MeshFilter subMeshFilter = sub.AddComponent<MeshFilter>();
         Mesh subMesh = new Mesh();
