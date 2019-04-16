@@ -61,12 +61,12 @@ public static class FaceMapper
              throw new Exception("The list of faces doesn't have enough faces to extract");
         }
 
-        HashSet<TriangleFace> adjPoll = new HashSet<TriangleFace>();
+        List<TriangleFace> adjPoll = new List<TriangleFace>();
         HashSet<TriangleFace> extractedFaces = new HashSet<TriangleFace>();
 
-        TriangleFace face = faces[0];
+        TriangleFace face = faces[UnityEngine.Random.Range(0, faces.Count)];
         extractedFaces.Add(face);
-        AddRange(adjPoll, face.adjacent);
+        adjPoll.AddRange(face.adjacent);
         
         for (int i = 1; i < numToExtract; i++)
         {
@@ -77,8 +77,9 @@ public static class FaceMapper
                 {
                     foundOne = true;
                     extractedFaces.Add(adj);
-                    AddRange(adjPoll, adj.adjacent);
                     adjPoll.Remove(adj);
+                    adjPoll.AddRange(adj.adjacent);
+                    Shuffle(adjPoll);
                     break;
                 }
             }
@@ -117,6 +118,19 @@ public static class FaceMapper
         foreach (T obj in objs)
         {
             set.Add(obj);
+        }
+    }
+
+    private static void Shuffle<T>(IList<T> ts)
+    {
+        var count = ts.Count;
+        var last = count - 1;
+        for (var i = 0; i < last; ++i)
+        {
+            var r = UnityEngine.Random.Range(i, count);
+            var tmp = ts[i];
+            ts[i] = ts[r];
+            ts[r] = tmp;
         }
     }
 }

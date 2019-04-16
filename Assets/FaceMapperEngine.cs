@@ -9,6 +9,7 @@ public class FaceMapperEngine : MonoBehaviour
     
     public MeshFilter[] objectsToExtract;
     public int numberToExtract = 12;
+    public Material extracedMaterial;
 
     [ContextMenu("Map")]
     void FaceMap()
@@ -35,26 +36,15 @@ public class FaceMapperEngine : MonoBehaviour
             Stopwatch sw = Stopwatch.StartNew();
             var (triangles, vertices) = FaceMapper.mapTriangles(mesh.triangles, mesh.vertices);
             var extractedFaces = FaceMapper.extractFaces(triangles, Mathf.Min(numberToExtract, triangles.Count));
-            
-            var (rawTriangles, rawVertices) = FaceMapper.getRawFromTriangles(extractedFaces);
 
-            foreach (Transform child in meshFilter.gameObject.transform)
-            {
-                GameObject.DestroyImmediate(child.gameObject);
-            }
+            clearAllChildren(meshFilter.gameObject);
 
-            GameObject sub = new GameObject();
-            sub.transform.position = meshFilter.gameObject.transform.position + Vector3.up * 2;
+            GameObject sub = buildMeshFromTriangles(extractedFaces);
+
+            sub.name = meshFilter.gameObject.name + "_1";
+            sub.transform.position = meshFilter.gameObject.transform.position;
+            sub.transform.localScale = Vector3.one * 1.0001f;
             sub.transform.parent = meshFilter.gameObject.transform;
-            sub.AddComponent<MeshRenderer>().material = meshFilter.gameObject.GetComponent<MeshRenderer>().material;
-            
-            MeshFilter subMeshFilter = sub.AddComponent<MeshFilter>();
-            Mesh subMesh = new Mesh();
-            subMeshFilter.sharedMesh = subMesh;
-            subMesh.Clear();
-            subMesh.vertices = rawVertices;
-            subMesh.triangles = rawTriangles;
-            subMesh.RecalculateNormals();
             
             sw.Stop();
 
@@ -62,7 +52,27 @@ public class FaceMapperEngine : MonoBehaviour
         }
     }
     
-    private void buildMeshFromTriangles() {
+    private void clearAllChildren(GameObject go) {
+        foreach (Transform child in go.transform)
+        {
+            GameObject.DestroyImmediate(child.gameObject);
+        }
+    }
+    
+    private GameObject buildMeshFromTriangles(List<TriangleFace> meshFaces) {
+        var (rawTriangles, rawVertices) = FaceMapper.getRawFromTriangles(meshFaces);
+
+        GameObject sub = new GameObject();
+        sub.AddComponent<MeshRenderer>().material = extracedMaterial;
+
+        MeshFilter subMeshFilter = sub.AddComponent<MeshFilter>();
+        Mesh subMesh = new Mesh();
+        subMeshFilter.sharedMesh = subMesh;
+        subMesh.Clear();
+        subMesh.vertices = rawVertices;
+        subMesh.triangles = rawTriangles;
+        subMesh.RecalculateNormals();
         
+        return sub;
     }
 }
