@@ -72,7 +72,7 @@ public static class FaceMapper
             bool foundOne = false;
             foreach (TriangleFace adj in adjPoll)
             {
-                if (!extractedFaces.Contains(adj))
+                if (!extractedFaces.Contains(adj) && faces.Contains(adj))
                 {
                     foundOne = true;
                     extractOneFace(faces, extractedFaces, adjPoll, adj);

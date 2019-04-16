@@ -8,7 +8,8 @@ public class FaceMapperEngine : MonoBehaviour
     public MeshFilter[] objectsToExtract;
     public int numberOfContinents = 5;
     public float percentageOfSea = 0.5f;
-    public Material extracedMaterial;
+    public Material landMaterial;
+    public Material seaMaterial;
     
     [ContextMenu("Map+Extract")]
     void MapAndExtract()
@@ -23,23 +24,27 @@ public class FaceMapperEngine : MonoBehaviour
 
             int totalFaces = triangles.Count;
             int facesForContinents = (int)(totalFaces * (1f - percentageOfSea));
-            int sizeOfEachContinent = (int)(facesForContinents / numberOfContinents);
             for (int i = 0; i < numberOfContinents; i++)
             {
-                var extractedFaces = FaceMapper.extractFaces(triangles, sizeOfEachContinent);
+                int sizeOfThisContinent = (int)(Random.Range(0.8f, 1.2f) * facesForContinents / numberOfContinents);
+                var extractedFaces = FaceMapper.extractFaces(triangles, sizeOfThisContinent);
 
-                GameObject sub = buildMeshFromTriangles(extractedFaces, extracedMaterial);
+                GameObject sub = buildMeshFromTriangles(extractedFaces, landMaterial);
 
                 sub.name = meshFilter.gameObject.name + "_" + i;
-                sub.transform.position = meshFilter.gameObject.transform.position + Vector3.up * 2;
+                sub.transform.position = meshFilter.gameObject.transform.position + Vector3.up * 2.2f;
                 sub.transform.localScale = Vector3.one * 1.0001f;
                 sub.transform.parent = meshFilter.gameObject.transform;
+                
+                UnityEngine.Debug.Log(sub.name + " got " + extractedFaces.Count);
             }
 
-            GameObject subSea = buildMeshFromTriangles(triangles, meshFilter.gameObject.GetComponent<MeshRenderer>().material);
+
+            UnityEngine.Debug.Log("Sea got left with " + triangles.Count);
+            GameObject subSea = buildMeshFromTriangles(triangles, seaMaterial);
 
             subSea.name = meshFilter.gameObject.name + "_sea";
-            subSea.transform.position = meshFilter.gameObject.transform.position + Vector3.up * 2;
+            subSea.transform.position = meshFilter.gameObject.transform.position + Vector3.up * 2.2f;
             subSea.transform.localScale = Vector3.one * 1.0001f;
             subSea.transform.parent = meshFilter.gameObject.transform;
             
