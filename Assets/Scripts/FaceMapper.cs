@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class FaceMapper
 {
-    public static List<TriangleFace> mapTriangles(int[] triangles, Vector3[] vertices)
+    public static (List<TriangleFace>, Dictionary<Vector3, List<TriangleFace>>) mapTriangles(int[] triangles, Vector3[] vertices)
     {
         var count = 0;
         var (mappedTriangles, mappedVertices) = createTriangles(triangles, vertices);
@@ -21,7 +21,7 @@ public static class FaceMapper
             }
         }
 
-        return mappedTriangles;
+        return (mappedTriangles, mappedVertices);
     }
 
     public static (List<TriangleFace>, Dictionary<Vector3, List<TriangleFace>>) createTriangles(int[] triangles, Vector3[] vertices)
@@ -61,12 +61,12 @@ public static class FaceMapper
              throw new Exception("The list of faces doesn't have enough faces to extract");
         }
 
-        List<TriangleFace> adjPoll = new List<TriangleFace>();
-        List<TriangleFace> extractedFaces = new List<TriangleFace>();
+        HashSet<TriangleFace> adjPoll = new HashSet<TriangleFace>();
+        HashSet<TriangleFace> extractedFaces = new HashSet<TriangleFace>();
 
         TriangleFace face = faces[0];
         extractedFaces.Add(face);
-        adjPoll.AddRange(face.adjacent);
+        AddRange(adjPoll, face.adjacent);
         
         for (int i = 1; i < numToExtract; i++)
         {
@@ -77,7 +77,7 @@ public static class FaceMapper
                 {
                     foundOne = true;
                     extractedFaces.Add(adj);
-                    adjPoll.AddRange(adj.adjacent);
+                    AddRange(adjPoll, adj.adjacent);
                     adjPoll.Remove(adj);
                     break;
                 }
@@ -90,6 +90,33 @@ public static class FaceMapper
 
         }
         
-        return extractedFaces;
+        return new List<TriangleFace>(extractedFaces);
+    }
+
+    public static (int[], Vector3[]) getRawFromTriangles(List<TriangleFace> faces) {
+        List<Vector3> vertices = new List<Vector3>();
+        List<int> triangles = new List<int>();
+        
+        foreach (var face in faces)
+        {
+            foreach (var vertex in face.vertices)
+            {
+                if (!vertices.Contains(vertex))
+                {
+                    vertices.Add(vertex);
+                }
+                
+                triangles.Add(vertices.IndexOf(vertex));
+            }
+        }
+        
+        return (triangles.ToArray(), vertices.ToArray());
+    }
+    
+    private static void AddRange<T>(HashSet<T> set, IEnumerable objs) {
+        foreach (T obj in objs)
+        {
+            set.Add(obj);
+        }
     }
 }
