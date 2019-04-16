@@ -5,28 +5,11 @@ using UnityEngine;
 
 public class FaceMapperEngine : MonoBehaviour
 {
-    public MeshFilter[] objectsToMap;
-    
     public MeshFilter[] objectsToExtract;
     public int numberOfContinents = 5;
     public float percentageOfSea = 0.5f;
     public Material extracedMaterial;
-
-    [ContextMenu("Map")]
-    void FaceMap()
-    {
-        foreach (var meshFilter in objectsToMap)
-        {
-            Mesh mesh = meshFilter.sharedMesh;
-
-            Stopwatch sw = Stopwatch.StartNew();
-            FaceMapper.mapTriangles(mesh.triangles, mesh.vertices);
-            sw.Stop();
-
-            UnityEngine.Debug.Log("Time taken for " + meshFilter.gameObject.name + " -> " + sw.Elapsed.TotalMilliseconds + "ms");
-        }
-    }
-
+    
     [ContextMenu("Map+Extract")]
     void MapAndExtract()
     {
@@ -37,7 +20,6 @@ public class FaceMapperEngine : MonoBehaviour
             Stopwatch sw = Stopwatch.StartNew();
             var (triangles, vertices) = FaceMapper.mapTriangles(mesh.triangles, mesh.vertices);
             clearAllChildren(meshFilter.gameObject);
-
 
             int totalFaces = triangles.Count;
             int facesForContinents = (int)(totalFaces * (1f - percentageOfSea));
