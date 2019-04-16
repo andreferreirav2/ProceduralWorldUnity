@@ -8,7 +8,8 @@ public class FaceMapperEngine : MonoBehaviour
     public MeshFilter[] objectsToMap;
     
     public MeshFilter[] objectsToExtract;
-    public int numberToExtract = 12;
+    public int numberOfContinents = 5;
+    public float percentageOfSea = 0.5f;
     public Material extracedMaterial;
 
     [ContextMenu("Map")]
@@ -35,19 +36,25 @@ public class FaceMapperEngine : MonoBehaviour
 
             Stopwatch sw = Stopwatch.StartNew();
             var (triangles, vertices) = FaceMapper.mapTriangles(mesh.triangles, mesh.vertices);
-            var extractedFaces = FaceMapper.extractFaces(triangles, Mathf.Min(numberToExtract, triangles.Count));
-
             clearAllChildren(meshFilter.gameObject);
 
-            GameObject sub = buildMeshFromTriangles(extractedFaces);
 
-            sub.name = meshFilter.gameObject.name + "_1";
-            sub.transform.position = meshFilter.gameObject.transform.position;
-            sub.transform.localScale = Vector3.one * 1.0001f;
-            sub.transform.parent = meshFilter.gameObject.transform;
+            int totalFaces = triangles.Count;
+            int facesForContinents = (int)(totalFaces * (1f - percentageOfSea));
+            int sizeOfEachContinent = (int)(facesForContinents / numberOfContinents);
+            for (int i = 0; i < numberOfContinents; i++)
+            {
+                var extractedFaces = FaceMapper.extractFaces(triangles, sizeOfEachContinent);
+
+                GameObject sub = buildMeshFromTriangles(extractedFaces);
+
+                sub.name = meshFilter.gameObject.name + "_" + i;
+                sub.transform.position = meshFilter.gameObject.transform.position;
+                sub.transform.localScale = Vector3.one * 1.0001f;
+                sub.transform.parent = meshFilter.gameObject.transform;
+            }
             
             sw.Stop();
-
             UnityEngine.Debug.Log("Time taken for " + meshFilter.gameObject.name + " -> " + sw.Elapsed.TotalMilliseconds + "ms");
         }
     }
