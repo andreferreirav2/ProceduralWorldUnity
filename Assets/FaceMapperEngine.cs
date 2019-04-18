@@ -6,7 +6,14 @@ using UnityEngine;
 public class FaceMapperEngine : MonoBehaviour
 {
     public MeshFilter[] objectsToExtract;
-    public int numberOfContinents = 5;
+    
+    public Dictionary<string, int> continents = new Dictionary<string, int>() {
+        {"europe", 200},
+        {"africa", 700},
+        {"america", 600},
+        {"oceania", 50},
+    };
+    
     public float percentageOfSea = 0.5f;
     public Material landMaterial;
     public Material seaMaterial;
@@ -24,39 +31,40 @@ public class FaceMapperEngine : MonoBehaviour
 
             int totalFaces = triangles.Count;
             int facesForContinents = (int)(totalFaces * (1f - percentageOfSea));
-            for (int i = 0; i < numberOfContinents; i++)
+            int totalAmountOfLand = 0;
+            foreach (var size in continents.Values)
             {
-                int sizeOfThisContinent = (int)(Random.Range(0.8f, 1.2f) * facesForContinents / numberOfContinents);
+                totalAmountOfLand += size;
+            }
+            foreach (var continent in continents)
+            {
+                int sizeOfThisContinent = facesForContinents * continent.Value / totalAmountOfLand;
                 var extractedFaces = FaceMapper.extractFaces(triangles, sizeOfThisContinent);
 
-                GameObject sub = buildMeshFromTriangles(extractedFaces, landMaterial);
-
-                sub.name = meshFilter.gameObject.name + "_" + i;
-                sub.transform.position = meshFilter.gameObject.transform.position + Vector3.up * 2.2f;
-                sub.transform.localScale = Vector3.one * 1.0001f;
-                sub.transform.parent = meshFilter.gameObject.transform;
-                
-                UnityEngine.Debug.Log(sub.name + " got " + extractedFaces.Count);
+                createSubMesh(meshFilter.gameObject, continent.Key, extractedFaces, landMaterial);
             }
-
-
-            UnityEngine.Debug.Log("Sea got left with " + triangles.Count);
-            GameObject subSea = buildMeshFromTriangles(triangles, seaMaterial);
-
-            subSea.name = meshFilter.gameObject.name + "_sea";
-            subSea.transform.position = meshFilter.gameObject.transform.position + Vector3.up * 2.2f;
-            subSea.transform.localScale = Vector3.one * 1.0001f;
-            subSea.transform.parent = meshFilter.gameObject.transform;
+            
+            createSubMesh(meshFilter.gameObject, "sea", triangles, seaMaterial);
             
             sw.Stop();
             UnityEngine.Debug.Log("Time taken for " + meshFilter.gameObject.name + " -> " + sw.Elapsed.TotalMilliseconds + "ms");
         }
     }
     
+    private void createSubMesh(GameObject parent, string name, List<TriangleFace> faces, Material material) {
+        GameObject sub = buildMeshFromTriangles(faces, material);
+
+        sub.name = name;
+        sub.transform.position = parent.transform.position + Vector3.up * 2.2f;
+        sub.transform.parent = parent.transform;
+
+        UnityEngine.Debug.Log(sub.name + " got " + faces.Count);
+    }
+    
     private void clearAllChildren(GameObject go) {
-        foreach (Transform child in go.transform)
+        while (go.transform.childCount != 0)
         {
-            GameObject.DestroyImmediate(child.gameObject);
+            DestroyImmediate(go.transform.GetChild(0).gameObject);
         }
     }
     
